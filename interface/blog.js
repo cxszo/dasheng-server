@@ -2169,9 +2169,15 @@ router.all(/^\/notes(\/\w+)?(\/\w+)?$/, $middlewares, (req, res)=>{
                     });
                     return false;
                 }
-                let resData = _data,
-                body = (_data.body || '').substr(0, 20);
-                resData.body = body;
+                let resData;
+
+                resData = _data.map(item=>{
+                    let newData = JSON.parse(JSON.stringify(item));
+                    newData.content = (item.body || '').substr(0, 20);
+                    delete newData.body;
+                    return newData;
+                })
+
 
                 res.contentType('json');
                 res.send({

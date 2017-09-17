@@ -52,7 +52,7 @@ UserSchema.pre('save', function(next) {
     this.meta.updateAt = Date.now()
   }
 
-  this.headimg = 'http://ov0zo91tq.bkt.clouddn.com/headimg/default/'+headimg_default[Math.floor(Math.random()*8)];
+  this.headimg = 'http://ov0zo91tq.bkt.clouddn.com/headimg/default/'+headimg_default[Math.floor(Math.random()*7)];
   bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
     if (err) return next(err)
     bcrypt.hash(user.password, salt, function(err, hash) {
