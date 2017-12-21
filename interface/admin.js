@@ -30,6 +30,7 @@ router.get('/userlist', (req, res)=>{
 
 //贷款运营-冯竹君
 /**
+ * 贷款数据
  * ps        一页显示多少条数据 默认不传 1000
  * pn        当前第几页 默认查第一页
  * startDate 查询的起始时间 默认上一个月 非自然月
@@ -81,4 +82,79 @@ router.get('/zhuj', (req, res)=>{
   return false;
 })
 
+
+router.post('/login', (req, res)=>{
+  let { userName, password } = req.body;
+  let filePath = path.resolve(process.cwd(), '../dasheng/admin/data/user.json');
+  let isSuccess = false, token = '';
+  try{
+    result = fs.readFileSync(filePath, 'utf-8');
+    result = JSON.parse(result)
+
+    result.forEach(v => {
+      if( userName==v.userName && password==v.password){
+        isSuccess = true;
+        token = v.token
+      }
+    });
+  }catch(e){}
+  res.contentType('json');
+  res.send({
+    status: isSuccess?'ok':'error',
+    token
+  });
+  return false;
+})
+
+router.get('/userinfo', (req, res)=>{
+  let { token } = req.query;
+  let filePath = path.resolve(process.cwd(), '../dasheng/admin/data/user.json');
+  let isSuccess = false, name = '', avatar = '';
+  try{
+    result = fs.readFileSync(filePath, 'utf-8');
+    result = JSON.parse(result)
+    result.forEach(v => {
+      if( token==v.token){
+        isSuccess = true;
+        name = v.userName
+        avatar = v.headImg
+      }
+    });
+  }catch(e){}
+  res.contentType('json');
+  res.send({
+    status: isSuccess?'ok':'error',
+    avatar,
+    name
+  });
+  return false;
+})
+
+
+router.post('/edit', (req, res)=>{
+
+
+
+  
+  // let { userName, password } = req.body;
+  // let filePath = path.resolve(process.cwd(), '../dasheng/admin/data/user.json');
+  // let isSuccess = false, token = '';
+  // try{
+  //   result = fs.readFileSync(filePath, 'utf-8');
+  //   result = JSON.parse(result)
+
+  //   result.forEach(v => {
+  //     if( userName==v.userName && password==v.password){
+  //       isSuccess = true;
+  //       token = v.token
+  //     }
+  //   });
+  // }catch(e){}
+  // res.contentType('json');
+  // res.send({
+  //   status: isSuccess?'ok':'error',
+  //   token
+  // });
+  // return false;
+})
 module.exports = router;
