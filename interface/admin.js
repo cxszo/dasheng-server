@@ -66,7 +66,28 @@ function addDate( result, filePath ) {
  * endDate   查询的截止时间 默认今天
  */
 router.get('/zhuj', (req, res)=>{
-  let { startDate:start, endDate:end, ps='1000', pn='1' } = req.query;
+  let { startDate:start, endDate:end, ps='1000', pn='1', token } = req.query;
+
+  if( !token ){
+    res.contentType('json');
+    res.send({
+        code:'2',
+        desc:'请先登录'
+    });
+    return ;
+  }
+  let auth = 0;//没有登录的是0 普通用户是1  管理员是99
+  let filePath_user = path.resolve(process.cwd(), '../dasheng/admin/data/user.json');
+  try{
+    user = fs.readFileSync(filePath_user, 'utf-8');
+    user = JSON.parse(user)
+
+    user.forEach(v => {
+      if( token == v.token ){
+        auth = v.auth
+      }
+    });
+  }catch(e){}
 
   let filePath = path.resolve(process.cwd(), '../dasheng/admin/data/data.json');
   let desc = '查询成功'
@@ -119,6 +140,7 @@ router.get('/zhuj', (req, res)=>{
       ps,
       pn,
       total: result.length,
+      auth,
       desc
   });
   return false;
